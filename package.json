@@ -1,0 +1,25 @@
+{
+  "name": "mongoscraper",
+  "version": "1.0.0",
+  "description": "basic webscraper assignment",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rumblysam/mongoscraper.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/rumblysam/mongoscraper/issues"
+  },
+  "homepage": "https://github.com/rumblysam/mongoscraper#readme",
+  "dependencies": {
+    "cheerio": "^0.22.0",
+    "mongojs": "^2.4.0",
+    "request": "^2.81.0"
+  }
+}
