@@ -8,11 +8,16 @@ var app = express();
 var databaseUrl = "scraper";
 var collections = ["scrapedData"];
 
+var db = mongojs(databaseUrl, collections);
+db.on("error", function(error) {
+  console.log("Database Error:", error);
+});
+
 // Main route (simple Hello World Message)
 app.get("/", function(req, res) {
   res.send("Hello world");
 });
-
+var result = [];
 // Retrieve data from the db
 app.get("/all", function(req, res) {
   // Find all results from the scrapedData collection in the db
@@ -31,13 +36,13 @@ app.get("/all", function(req, res) {
 // Scrape data from one site and place it into the mongodb db
 app.get("/scrape", function(req, res) {
   // Make a request for the news section of ycombinator
-  request("http://www.npr.org/", function(error, response, html) {
+  request("http://www.arirang.com/News/News_List.asp?category=5", function(error, response, html) {
     // Load the html body from request into cheerio
     var $ = cheerio.load(html);
-    // For each element with a "title" class
-    $(".title").each(function(i, element) {
+    // For each element with a "" class
+    $(".aNews_List").each(function(i, element) {
       // Save the text of each link enclosed in the current element
-      var title = $(this).children("a").text();
+      var title = $(this).children("h4").text();
       // Save the href value of each link enclosed in the current element
       var link = $(this).children("a").attr("href");
 
@@ -59,6 +64,7 @@ app.get("/scrape", function(req, res) {
             // Log the saved data
             console.log(saved);
           }
+
         });
       }
     });
