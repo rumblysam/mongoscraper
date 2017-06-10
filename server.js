@@ -21,39 +21,42 @@ var result = [];
 // Retrieve data from the db
 app.get("/all", function(req, res) {
   // Find all results from the scrapedData collection in the db
-  db.scrapedData.find({}, function(error, found) {
-    // Throw any errors to the console
-    if (error) {
-      console.log(error);
-    }
-    // If there are no errors, send the data to the browser as a json
-    else {
-      res.json(found);
-    }
-  });
+  // db.scrapedData.find({}, function(error, found) {
+  //   // Throw any errors to the console
+  //   if (error) {
+  //     console.log(error);
+  //   }
+  //   // If there are no errors, send the data to the browser as a json
+  //   else {
+  //     res.json(found);
+  //   }
+  // });
+  res.json(result);
 });
 
 // Scrape data from one site and place it into the mongodb db
 app.get("/scrape", function(req, res) {
-  // Make a request for the news section of ycombinator
+  // Make a request for the news section of
   request("http://www.arirang.com/News/News_List.asp?category=5", function(error, response, html) {
     // Load the html body from request into cheerio
     var $ = cheerio.load(html);
     // For each element with a "" class
-    $(".aNews_List").each(function(i, element) {
-      // Save the text of each link enclosed in the current element
-      var title = $(this).children("h4").text();
-      // Save the href value of each link enclosed in the current element
-      var link = $(this).children("a").attr("href");
+    $("#aNews_List li > a").each(function(i, element) {
+        var title = $(element).children("h4").text();
+        var link = "http://www.arirang.com/News/" + $(element).attr("href");
 
-      // If this title element had both a title and a link
-      if (title && link) {
-        // Save the data in the scrapedData db
-        db.scrapedData.save({
+          result.push({
+            title: title,
+            link: link
+        });
+        
+    
+         // Save the data in the scrapedData db
+        db.scraper.insert({
           title: title,
           link: link
         },
-        function(error, saved) {
+        function(error, data) {
           // If there's an error during this query
           if (error) {
             // Log the error
@@ -62,16 +65,17 @@ app.get("/scrape", function(req, res) {
           // Otherwise,
           else {
             // Log the saved data
-            console.log(saved);
+            console.log(data);
           }
-
-        });
-      }
+          });
+        
+      
     });
   });
 
   // This will send a "Scrape Complete" message to the browser
   res.send("Scrape Complete");
+  //console.log(result);
 });
 
 
